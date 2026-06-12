@@ -1,0 +1,6 @@
+show_id,type,title,director,cast,country,date_added,release_year,rating,duration,listed_in,description
+s1,Movie,The Great Comedians,John Doe,"Actor A, Actor B",USA,September 9 2021,2021,PG-13,90 min,"Comedies, Documentaries","A hilarious look at the best comedians."
+s2,TV Show,Relaxing Nature,Jane Smith,,UK,September 10 2021,2021,TV-G,1 Season,"Docuseries, Science & Nature","Beautiful landscapes to help you relax."
+s3,Movie,Action Packed,Action Director,,USA,September 11 2021,2020,R,120 min,"Action & Adventure","An explosive action movie."
+s4,Movie,Peaceful Mind,,,,,2019,PG,60 min,"Documentaries","Meditation and peaceful mind strategies."
+s5,TV Show,Funny Sitcom,,,,,2020,TV-14,3 Seasons,"TV Comedies","A lighthearted show to disconnect and laugh."
