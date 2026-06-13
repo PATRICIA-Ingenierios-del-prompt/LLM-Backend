@@ -25,19 +25,32 @@ public class LlmService {
 
     private void initModel() {
         Dotenv dotenv = Dotenv.configure().ignoreIfMissing().load();
-        String apiKey = dotenv.get("OPENAI_API_KEY");
+        String groqApiKey = dotenv.get("GROQ_API_KEY");
+        String openAiApiKey = dotenv.get("OPENAI_API_KEY");
         
-        if (apiKey == null || apiKey.equals("TU_API_KEY_AQUI") || apiKey.isEmpty()) {
-            System.err.println("ADVERTENCIA: OPENAI_API_KEY no configurada. El LLM no funcionara correctamente.");
-        } else {
+        if (groqApiKey != null && !groqApiKey.isEmpty() && !groqApiKey.equals("TU_GROQ_API_KEY_AQUI")) {
             try {
                 this.model = OpenAiChatModel.builder()
-                        .apiKey(apiKey)
+                        .baseUrl("https://api.groq.com/openai/v1")
+                        .apiKey(groqApiKey)
+                        .modelName("llama-3.1-8b-instant")
+                        .build();
+                System.out.println("[INFO] LLM configurado usando Groq API (Llama 3.1 8B)");
+            } catch (Exception e) {
+                System.err.println("Error al inicializar Groq: " + e.getMessage());
+            }
+        } else if (openAiApiKey != null && !openAiApiKey.isEmpty() && !openAiApiKey.equals("TU_API_KEY_AQUI")) {
+            try {
+                this.model = OpenAiChatModel.builder()
+                        .apiKey(openAiApiKey)
                         .modelName("gpt-3.5-turbo")
                         .build();
+                System.out.println("[INFO] LLM configurado usando OpenAI API (GPT-3.5)");
             } catch (Exception e) {
                 System.err.println("Error al inicializar OpenAI: " + e.getMessage());
             }
+        } else {
+            System.err.println("ADVERTENCIA: Ni GROQ_API_KEY ni OPENAI_API_KEY estan configuradas. El LLM no funcionara correctamente.");
         }
     }
 
@@ -91,7 +104,14 @@ public class LlmService {
                 "Mensaje del estudiante: " + userMessage + "\n" +
                 "Respuesta:";
         
-        return model.generate(prompt);
+        try {
+            return model.generate(prompt);
+        } catch (Exception e) {
+            if (e.getMessage() != null && e.getMessage().contains("insufficient_quota")) {
+                return "Error: Tu clave de OpenAI no tiene saldo disponible (insufficient_quota).\n     Por favor, recarga saldo en https://platform.openai.com/settings/billing";
+            }
+            return "Error al comunicarse con el LLM: " + e.getMessage();
+        }
     }
 
     public String getDiaryAdvice(String mood, String content) {
@@ -103,7 +123,14 @@ public class LlmService {
                 "Escribe un breve y reconfortante consejo basado en lo que escribio. Manten un tono comprensivo.\n" +
                 "Consejo:";
         
-        return model.generate(prompt);
+        try {
+            return model.generate(prompt);
+        } catch (Exception e) {
+            if (e.getMessage() != null && e.getMessage().contains("insufficient_quota")) {
+                return "Error: Tu clave de OpenAI no tiene saldo disponible (insufficient_quota) para generar consejos.";
+            }
+            return "Error al comunicarse con el LLM: " + e.getMessage();
+        }
     }
 
     public String getDisconnectionRecommendation(String preferences) {
@@ -116,6 +143,13 @@ public class LlmService {
                 "Recomienda 1 o 2 opciones del catalogo y explica por que le ayudaran a relajarse. Tambien puedes sugerir algo fuera de pantalla.\n" +
                 "Recomendacion:";
         
-        return model.generate(prompt);
+        try {
+            return model.generate(prompt);
+        } catch (Exception e) {
+            if (e.getMessage() != null && e.getMessage().contains("insufficient_quota")) {
+                return "Error: Tu clave de OpenAI no tiene saldo disponible (insufficient_quota).\n     Sugerencia alternativa nativa: Puedes ver una comedia o documental relajante o tomar una taza de té.";
+            }
+            return "Error al comunicarse con el LLM: " + e.getMessage();
+        }
     }
 }

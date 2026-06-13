@@ -8,9 +8,9 @@ public class AudioService {
     public List<String> getSoundsCatalog() {
         return Arrays.asList(
                 "1. Ruido Blanco (White Noise): Ideal para bloquear distracciones.",
-                "2. Ruido Marrón: Excelente para relajación profunda y sueño.",
+                "2. Ruido Marron: Excelente para relajacion profunda y sueno.",
                 "3. Lluvia Suave: Sonido continuo para calmar la ansiedad.",
-                "4. Bosque y Pájaros: Sonidos ambientales del bosque."
+                "4. Bosque y Pajaros: Sonidos ambientales del bosque."
         );
     }
 

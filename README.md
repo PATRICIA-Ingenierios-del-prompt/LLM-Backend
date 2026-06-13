@@ -12,25 +12,31 @@ Este proyecto es una aplicacion de consola desarrollada en **Java 21** con **Mav
 
 ---
 
-## Como Ejecutar el Proyecto
+## Cómo Ejecutar el Proyecto
 
 ### Requisitos Previos
-1. **Java 21 (JDK 21)** instalado en el sistema.
-2. **Maven** instalado (o usar el wrapper proporcionado).
-3. Obtener una **API Key** de OpenAI.
+1. **Java 21 (JDK 21)** instalado en el sistema y configurado en el PATH (o la variable `JAVA_HOME`).
+2. Obtener una **API Key** de OpenAI.
 
 ### Pasos
-1. Clona o descarga este repositorio y abre una consola (PowerShell / CMD) en la carpeta raiz.
-2. Abre el archivo `.env` en la raiz del proyecto y agrega tu llave:
+1. Abre una consola (PowerShell o CMD) en la carpeta raíz del proyecto (`C:\Users\Isabel\Downloads\LLM-Backend`).
+2. Abre el archivo `.env` en la raíz del proyecto y agrega tu llave:
    ```env
    OPENAI_API_KEY="tu_llave_real_aqui"
    ```
-3. Compila y ejecuta la aplicacion de forma interactiva usando Maven:
-   ```bash
-   mvn clean compile exec:java
+3. Compila y ejecuta la aplicación usando el Maven local que viene incluido en la carpeta `apache-maven-3.9.6`:
+
+   **En PowerShell:**
+   ```powershell
+   .\apache-maven-3.9.6\bin\mvn clean compile exec:java
    ```
 
-4. Disfruta usando el menu desde tu terminal!
+   **En CMD (Símbolo del sistema):**
+   ```cmd
+   apache-maven-3.9.6\bin\mvn clean compile exec:java
+   ```
+
+4. ¡Disfruta usando el menú desde tu terminal!
 
 ## Datasets Usados (Kaggle)
 Este proyecto lee informacion en tiempo real de dos datasets alojados en `src/main/resources/data/`:

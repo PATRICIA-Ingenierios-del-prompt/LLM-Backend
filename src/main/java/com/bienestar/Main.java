@@ -11,10 +11,7 @@ import java.util.Scanner;
 public class Main {
 
     public static void main(String[] args) {
-        // Forzar la salida a UTF-8 para arreglar caracteres en la consola de Windows
-        System.setOut(new PrintStream(System.out, true, StandardCharsets.UTF_8));
-
-        Scanner scanner = new Scanner(System.in, StandardCharsets.UTF_8);
+        Scanner scanner = new Scanner(System.in);
         LlmService llmService = new LlmService();
         AudioService audioService = new AudioService();
         DiaryRepository diaryRepository = new DiaryRepository();
@@ -33,8 +30,10 @@ public class Main {
             System.out.println("5. Ver Ejercicios de Respiracion (RF-BNST-05)");
             System.out.println("6. Salir");
             System.out.print("Opcion: ");
-            
-            String option = scanner.nextLine();
+            String option = scanner.nextLine().trim();
+            if (option.isEmpty()) {
+                continue;
+            }
 
             switch (option) {
                 case "1":
@@ -47,7 +46,7 @@ public class Main {
                         
                         System.out.println("Pensando...");
                         String response = llmService.getChatbotResponse(msg);
-                        System.out.println("Bot: " + response);
+                        System.out.println("Bot: " + cleanTextForConsole(response));
                     }
                     break;
                 case "2":
@@ -62,15 +61,15 @@ public class Main {
                     diaryRepository.saveEntry(userId, content, mood);
                     System.out.println("\nGenerando un consejo para ti...");
                     String advice = llmService.getDiaryAdvice(mood, content);
-                    System.out.println("Consejo del Agente: " + advice);
+                    System.out.println("Consejo del Agente: " + cleanTextForConsole(advice));
                     break;
                 case "3":
                     System.out.println("\n--- Recomendaciones de Desconexion ---");
                     System.out.print("Dime que tipo de entretenimiento buscas hoy o como te sientes: ");
                     String prefs = scanner.nextLine();
-                    System.out.println("Buscando en el catálogo de Kaggle...");
+                    System.out.println("Buscando en el catalogo de Kaggle...");
                     String recs = llmService.getDisconnectionRecommendation(prefs);
-                    System.out.println("Recomendación:\n" + recs);
+                    System.out.println("Recomendacion:\n" + cleanTextForConsole(recs));
                     break;
                 case "4":
                     System.out.println("\n--- Sonidos de Relajacion ---");
@@ -92,5 +91,15 @@ public class Main {
                     System.out.println("Opcion no valida. Intentalo de nuevo.");
             }
         }
+    }
+
+    private static String cleanTextForConsole(String text) {
+        if (text == null) return null;
+        return text
+            .replace("á", "a").replace("é", "e").replace("í", "i").replace("ó", "o").replace("ú", "u")
+            .replace("Á", "A").replace("É", "E").replace("Í", "I").replace("Ó", "O").replace("Ú", "U")
+            .replace("ñ", "n").replace("Ñ", "N")
+            .replace("¿", "").replace("¡", "")
+            .replace("ü", "u").replace("Ü", "U");
     }
 }
