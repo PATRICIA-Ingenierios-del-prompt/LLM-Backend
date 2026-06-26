@@ -70,11 +70,11 @@ Este diagrama detalla los componentes internos de la aplicación y la inyección
 ```mermaid
 graph TD
     subgraph "Console Application (Spring Boot)"
-        UI[ConsoleUI.java\nCommandLineRunner]
-        LlmSvc[LlmService.java\n@Service - Gestión RAG]
-        AudioSvc[AudioService.java\n@Service - Audios]
-        DiaryRepo[DiaryRepository.java\n@Repository - Almacenamiento Local]
-        VectorDB[(InMemory\nEmbeddingStore)]
+        UI["ConsoleUI.java<br/>CommandLineRunner"]
+        LlmSvc["LlmService.java<br/>@Service - Gestión RAG"]
+        AudioSvc["AudioService.java<br/>@Service - Audios"]
+        DiaryRepo["DiaryRepository.java<br/>@Repository - Almacenamiento Local"]
+        VectorDB[("InMemory<br/>EmbeddingStore")]
     end
 
     UI --> LlmSvc
