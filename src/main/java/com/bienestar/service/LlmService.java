@@ -1,10 +1,25 @@
 package com.bienestar.service;
 
 import com.opencsv.CSVReader;
-import com.opencsv.exceptions.CsvValidationException;
+import dev.langchain4j.data.document.Document;
+import dev.langchain4j.data.document.Metadata;
+import dev.langchain4j.data.segment.TextSegment;
 import dev.langchain4j.model.chat.ChatLanguageModel;
+import dev.langchain4j.model.embedding.EmbeddingModel;
+import dev.langchain4j.model.embedding.onnx.allminilml6v2.AllMiniLmL6V2EmbeddingModel;
 import dev.langchain4j.model.openai.OpenAiChatModel;
+import dev.langchain4j.rag.content.retriever.ContentRetriever;
+import dev.langchain4j.rag.content.retriever.EmbeddingStoreContentRetriever;
+import dev.langchain4j.service.AiServices;
+import dev.langchain4j.service.SystemMessage;
+import dev.langchain4j.service.UserMessage;
+import dev.langchain4j.store.embedding.EmbeddingStore;
+import dev.langchain4j.store.embedding.EmbeddingStoreIngestor;
+import dev.langchain4j.store.embedding.inmemory.InMemoryEmbeddingStore;
 import io.github.cdimascio.dotenv.Dotenv;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
 
 import java.io.InputStreamReader;
 import java.io.Reader;
@@ -12,144 +27,162 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+@Service
 public class LlmService {
 
-    private ChatLanguageModel model;
-    private String faqContext = "";
-    private String moviesContext = "";
+    private static final Logger log = LoggerFactory.getLogger(LlmService.class);
+    
+    private ChatLanguageModel chatModel;
+    private WellbeingAssistant assistant;
+    private EmbeddingModel embeddingModel;
+    private EmbeddingStore<TextSegment> embeddingStore;
 
-    public LlmService() {
-        initModel();
-        loadDatasets();
+    interface WellbeingAssistant {
+        @SystemMessage({
+            "Eres un asistente de apoyo estudiantil amigable y empatico.",
+            "Tu objetivo es dar soporte de primer nivel y responder preguntas sobre salud estudiantil y recomendar actividades."
+        })
+        String chat(@UserMessage String userMessage);
     }
 
-    private void initModel() {
+    public LlmService() {
+        initModels();
+        if (chatModel != null) {
+            setupRag();
+        }
+    }
+
+    private void initModels() {
         Dotenv dotenv = Dotenv.configure().ignoreIfMissing().load();
         String groqApiKey = dotenv.get("GROQ_API_KEY");
         String openAiApiKey = dotenv.get("OPENAI_API_KEY");
         
         if (groqApiKey != null && !groqApiKey.isEmpty() && !groqApiKey.equals("TU_GROQ_API_KEY_AQUI")) {
             try {
-                this.model = OpenAiChatModel.builder()
+                this.chatModel = OpenAiChatModel.builder()
                         .baseUrl("https://api.groq.com/openai/v1")
                         .apiKey(groqApiKey)
                         .modelName("llama-3.1-8b-instant")
                         .build();
-                System.out.println("[INFO] LLM configurado usando Groq API (Llama 3.1 8B)");
+                log.info("LLM configurado usando Groq API (Llama 3.1 8B)");
             } catch (Exception e) {
-                System.err.println("Error al inicializar Groq: " + e.getMessage());
+                log.error("Error al inicializar Groq", e);
             }
         } else if (openAiApiKey != null && !openAiApiKey.isEmpty() && !openAiApiKey.equals("TU_API_KEY_AQUI")) {
             try {
-                this.model = OpenAiChatModel.builder()
+                this.chatModel = OpenAiChatModel.builder()
                         .apiKey(openAiApiKey)
                         .modelName("gpt-3.5-turbo")
                         .build();
-                System.out.println("[INFO] LLM configurado usando OpenAI API (GPT-3.5)");
+                log.info("LLM configurado usando OpenAI API (GPT-3.5)");
             } catch (Exception e) {
-                System.err.println("Error al inicializar OpenAI: " + e.getMessage());
+                log.error("Error al inicializar OpenAI", e);
             }
         } else {
-            System.err.println("ADVERTENCIA: Ni GROQ_API_KEY ni OPENAI_API_KEY estan configuradas. El LLM no funcionara correctamente.");
+            log.warn("Ni GROQ_API_KEY ni OPENAI_API_KEY estan configuradas. El LLM no funcionara correctamente.");
         }
+
+        // Initialize local embedding model
+        this.embeddingModel = new AllMiniLmL6V2EmbeddingModel();
+        this.embeddingStore = new InMemoryEmbeddingStore<>();
     }
 
-    private void loadDatasets() {
+    private void setupRag() {
+        List<Document> documents = new ArrayList<>();
+
         // Load FAQ
         try (Reader reader = new InputStreamReader(Objects.requireNonNull(getClass().getResourceAsStream("/data/mental_health_faq.csv")));
              CSVReader csvReader = new CSVReader(reader)) {
             String[] line;
-            StringBuilder sb = new StringBuilder();
             csvReader.readNext(); // skip header
             while ((line = csvReader.readNext()) != null) {
                 if(line.length >= 2) {
-                    sb.append("Q: ").append(line[0]).append("\nA: ").append(line[1]).append("\n");
+                    documents.add(Document.from("Pregunta: " + line[0] + "\nRespuesta: " + line[1], Metadata.from("type", "faq")));
                 }
             }
-            faqContext = sb.toString();
         } catch (Exception e) {
-            System.err.println("No se pudo cargar el dataset de FAQ: " + e.getMessage());
+            log.error("No se pudo cargar el dataset de FAQ", e);
         }
 
         // Load Movies
         try (Reader reader = new InputStreamReader(Objects.requireNonNull(getClass().getResourceAsStream("/data/netflix_titles.csv")));
              CSVReader csvReader = new CSVReader(reader)) {
             String[] line;
-            StringBuilder sb = new StringBuilder();
             csvReader.readNext(); // skip header
             int count = 0;
-            while ((line = csvReader.readNext()) != null && count < 10) {
-                // Title is usually index 2, listed_in index 10, description index 11
+            while ((line = csvReader.readNext()) != null && count < 50) { // Limit to 50 for local ingestion speed
                 if(line.length >= 12) {
                     String listedIn = line[10];
                     if (listedIn.toLowerCase().contains("comedies") || listedIn.toLowerCase().contains("documentaries")) {
-                        sb.append("- ").append(line[2]).append(" (").append(listedIn).append("): ").append(line[11]).append("\n");
+                        documents.add(Document.from("Pelicula/Serie: " + line[2] + " (" + listedIn + "). Sinopsis: " + line[11], Metadata.from("type", "movie")));
                         count++;
                     }
                 }
             }
-            moviesContext = sb.toString();
         } catch (Exception e) {
-            System.err.println("No se pudo cargar el dataset de peliculas: " + e.getMessage());
+            log.error("No se pudo cargar el dataset de peliculas", e);
         }
+
+        // Ingest documents into store
+        EmbeddingStoreIngestor ingestor = EmbeddingStoreIngestor.builder()
+                .embeddingModel(embeddingModel)
+                .embeddingStore(embeddingStore)
+                .build();
+        
+        ingestor.ingest(documents);
+        log.info("RAG configurado: Se ingresaron " + documents.size() + " documentos en el EmbeddingStore local.");
+
+        ContentRetriever contentRetriever = EmbeddingStoreContentRetriever.builder()
+                .embeddingStore(embeddingStore)
+                .embeddingModel(embeddingModel)
+                .maxResults(3) // Fetch top 3 relevant chunks
+                .minScore(0.5)
+                .build();
+
+        this.assistant = AiServices.builder(WellbeingAssistant.class)
+                .chatLanguageModel(chatModel)
+                .contentRetriever(contentRetriever)
+                .build();
     }
 
     public String getChatbotResponse(String userMessage) {
-        if (model == null) return "El servicio LLM no esta configurado (Falta API Key).";
-        
-        String prompt = "Eres un asistente de apoyo estudiantil amigable y empatico.\n" +
-                "Tu objetivo es dar soporte de primer nivel y responder preguntas sobre salud estudiantil.\n" +
-                "Aqui hay algunas preguntas frecuentes y respuestas que puedes usar:\n" +
-                faqContext + "\n\n" +
-                "Mensaje del estudiante: " + userMessage + "\n" +
-                "Respuesta:";
-        
+        if (assistant == null) return "El servicio LLM no esta configurado (Falta API Key).";
         try {
-            return model.generate(prompt);
+            return assistant.chat(userMessage);
         } catch (Exception e) {
-            if (e.getMessage() != null && e.getMessage().contains("insufficient_quota")) {
-                return "Error: Tu clave de OpenAI no tiene saldo disponible (insufficient_quota).\n     Por favor, recarga saldo en https://platform.openai.com/settings/billing";
-            }
-            return "Error al comunicarse con el LLM: " + e.getMessage();
+            return handleError(e);
         }
     }
 
     public String getDiaryAdvice(String mood, String content) {
-        if (model == null) return "Diario guardado, pero el servicio LLM no esta configurado para dar consejos.";
-        
-        String prompt = "Eres un consejero empatico. Un estudiante acaba de escribir en su diario de emociones.\n" +
-                "Estado de animo detectado/indicado: " + mood + "\n" +
-                "Contenido del diario: \"" + content + "\"\n\n" +
-                "Escribe un breve y reconfortante consejo basado en lo que escribio. Manten un tono comprensivo.\n" +
-                "Consejo:";
-        
+        if (assistant == null) return "Diario guardado, pero el servicio LLM no esta configurado para dar consejos.";
+        String prompt = "Un estudiante acaba de escribir en su diario de emociones.\n" +
+                "Estado de animo: " + mood + "\n" +
+                "Contenido: \"" + content + "\"\n\n" +
+                "Dame un breve consejo reconfortante y comprensivo.";
         try {
-            return model.generate(prompt);
+            return assistant.chat(prompt);
         } catch (Exception e) {
-            if (e.getMessage() != null && e.getMessage().contains("insufficient_quota")) {
-                return "Error: Tu clave de OpenAI no tiene saldo disponible (insufficient_quota) para generar consejos.";
-            }
-            return "Error al comunicarse con el LLM: " + e.getMessage();
+            return handleError(e);
         }
     }
 
     public String getDisconnectionRecommendation(String preferences) {
-        if (model == null) return "Servicio LLM no configurado. Te recomendamos salir a caminar 10 minutos.";
-        
-        String prompt = "Eres un recomendador de entretenimiento para ayudar a los estudiantes a desconectarse.\n" +
-                "El estudiante tiene estas preferencias: \"" + preferences + "\"\n\n" +
-                "Catalogo disponible:\n" +
-                moviesContext + "\n\n" +
-                "Recomienda 1 o 2 opciones del catalogo y explica por que le ayudaran a relajarse. Tambien puedes sugerir algo fuera de pantalla.\n" +
-                "Recomendacion:";
-        
+        if (assistant == null) return "Servicio LLM no configurado. Te recomendamos salir a caminar 10 minutos.";
+        String prompt = "El estudiante quiere desconectarse. Preferencias: \"" + preferences + "\"\n" +
+                "Busca en el catalogo de peliculas disponibles o sugiere otra actividad. Explica por que le ayudara.";
         try {
-            return model.generate(prompt);
+            return assistant.chat(prompt);
         } catch (Exception e) {
-            if (e.getMessage() != null && e.getMessage().contains("insufficient_quota")) {
-                return "Error: Tu clave de OpenAI no tiene saldo disponible (insufficient_quota).\n     Sugerencia alternativa nativa: Puedes ver una comedia o documental relajante o tomar una taza de té.";
-            }
-            return "Error al comunicarse con el LLM: " + e.getMessage();
+            return handleError(e);
         }
+    }
+
+    private String handleError(Exception e) {
+        log.error("Error comunicandose con el LLM", e);
+        if (e.getMessage() != null && e.getMessage().contains("insufficient_quota")) {
+            return "Error: Tu clave de API no tiene saldo disponible (insufficient_quota).";
+        }
+        return "Error al comunicarse con el LLM: " + e.getMessage();
     }
 }

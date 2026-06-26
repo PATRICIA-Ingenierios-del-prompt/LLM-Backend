@@ -1,8 +1,11 @@
 package com.bienestar.service;
 
+import org.springframework.stereotype.Service;
+
 import java.util.Arrays;
 import java.util.List;
 
+@Service
 public class AudioService {
 
     public List<String> getSoundsCatalog() {

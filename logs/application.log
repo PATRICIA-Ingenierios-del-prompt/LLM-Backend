@@ -1,0 +1,58 @@
+2026-06-26 13:31:19.049 [main] INFO  com.bienestar.Main - Starting Main using Java 21.0.11 with PID 3700 (C:\Users\Isabel\Downloads\LLM-Backend\target\classes started by Isabel in C:\Users\Isabel\Downloads\LLM-Backend)
+2026-06-26 13:31:19.053 [main] INFO  com.bienestar.Main - No active profile set, falling back to 1 default profile: "default"
+2026-06-26 13:31:21.237 [main] INFO  com.bienestar.service.LlmService - LLM configurado usando Groq API (Llama 3.1 8B)
+2026-06-26 13:31:23.292 [main] INFO  ai.djl.util.Platform - Found matching platform from: jar:file:/C:/Users/Isabel/.m2/repository/ai/djl/huggingface/tokenizers/0.26.0/tokenizers-0.26.0.jar!/native/lib/tokenizers.properties
+2026-06-26 13:31:23.300 [main] INFO  a.d.h.tokenizers.jni.LibUtils - Extracting native/lib/win-x86_64/libwinpthread-1.dll to cache ...
+2026-06-26 13:31:23.306 [main] INFO  a.d.h.tokenizers.jni.LibUtils - Extracting native/lib/win-x86_64/libgcc_s_seh-1.dll to cache ...
+2026-06-26 13:31:23.314 [main] INFO  a.d.h.tokenizers.jni.LibUtils - Extracting native/lib/win-x86_64/libstdc++-6.dll to cache ...
+2026-06-26 13:31:23.338 [main] INFO  a.d.h.tokenizers.jni.LibUtils - Extracting native/lib/win-x86_64/tokenizers.dll to cache ...
+2026-06-26 13:31:23.612 [main] DEBUG d.l.s.e.EmbeddingStoreIngestor - Starting to ingest 7 documents
+2026-06-26 13:31:23.614 [main] DEBUG d.l.s.e.EmbeddingStoreIngestor - Starting to embed 7 text segments
+2026-06-26 13:31:23.725 [main] DEBUG d.l.s.e.EmbeddingStoreIngestor - Finished embedding 7 text segments
+2026-06-26 13:31:23.725 [main] DEBUG d.l.s.e.EmbeddingStoreIngestor - Starting to store 7 text segments into the embedding store
+2026-06-26 13:31:23.731 [main] DEBUG d.l.s.e.EmbeddingStoreIngestor - Finished storing 7 text segments into the embedding store
+2026-06-26 13:31:23.731 [main] INFO  com.bienestar.service.LlmService - RAG configurado: Se ingresaron 7 documentos en el EmbeddingStore local.
+2026-06-26 13:31:23.828 [main] WARN  o.s.c.a.AnnotationConfigApplicationContext - Exception encountered during context initialization - cancelling refresh attempt: org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'consoleUI' defined in file [C:\Users\Isabel\Downloads\LLM-Backend\target\classes\com\bienestar\ConsoleUI.class]: Unsatisfied dependency expressed through constructor parameter 2: Error creating bean with name 'diaryRepository' defined in file [C:\Users\Isabel\Downloads\LLM-Backend\target\classes\com\bienestar\service\DiaryRepository.class]: Unsatisfied dependency expressed through constructor parameter 0: No qualifying bean of type 'com.fasterxml.jackson.databind.ObjectMapper' available: expected at least 1 bean which qualifies as autowire candidate. Dependency annotations: {}
+2026-06-26 13:31:23.845 [main] INFO  o.s.b.a.l.ConditionEvaluationReportLogger - 
+
+Error starting ApplicationContext. To display the condition evaluation report re-run your application with 'debug' enabled.
+2026-06-26 13:31:23.905 [main] ERROR o.s.b.d.LoggingFailureAnalysisReporter - 
+
+***************************
+APPLICATION FAILED TO START
+***************************
+
+Description:
+
+Parameter 0 of constructor in com.bienestar.service.DiaryRepository required a bean of type 'com.fasterxml.jackson.databind.ObjectMapper' that could not be found.
+
+
+Action:
+
+Consider defining a bean of type 'com.fasterxml.jackson.databind.ObjectMapper' in your configuration.
+
+2026-06-26 13:32:55.536 [main] INFO  com.bienestar.Main - Starting Main using Java 21.0.11 with PID 1656 (C:\Users\Isabel\Downloads\LLM-Backend\target\classes started by Isabel in C:\Users\Isabel\Downloads\LLM-Backend)
+2026-06-26 13:32:55.541 [main] INFO  com.bienestar.Main - No active profile set, falling back to 1 default profile: "default"
+2026-06-26 13:32:57.223 [main] INFO  com.bienestar.service.LlmService - LLM configurado usando Groq API (Llama 3.1 8B)
+2026-06-26 13:32:59.013 [main] INFO  ai.djl.util.Platform - Found matching platform from: jar:file:/C:/Users/Isabel/.m2/repository/ai/djl/huggingface/tokenizers/0.26.0/tokenizers-0.26.0.jar!/native/lib/tokenizers.properties
+2026-06-26 13:32:59.136 [main] DEBUG d.l.s.e.EmbeddingStoreIngestor - Starting to ingest 7 documents
+2026-06-26 13:32:59.138 [main] DEBUG d.l.s.e.EmbeddingStoreIngestor - Starting to embed 7 text segments
+2026-06-26 13:32:59.252 [main] DEBUG d.l.s.e.EmbeddingStoreIngestor - Finished embedding 7 text segments
+2026-06-26 13:32:59.252 [main] DEBUG d.l.s.e.EmbeddingStoreIngestor - Starting to store 7 text segments into the embedding store
+2026-06-26 13:32:59.258 [main] DEBUG d.l.s.e.EmbeddingStoreIngestor - Finished storing 7 text segments into the embedding store
+2026-06-26 13:32:59.258 [main] INFO  com.bienestar.service.LlmService - RAG configurado: Se ingresaron 7 documentos en el EmbeddingStore local.
+2026-06-26 13:32:59.616 [main] INFO  com.bienestar.Main - Started Main in 4.879 seconds (process running for 5.536)
+2026-06-26 13:34:26.783 [main] INFO  o.s.b.a.l.ConditionEvaluationReportLogger - 
+
+Error starting ApplicationContext. To display the condition evaluation report re-run your application with 'debug' enabled.
+2026-06-26 13:34:42.531 [main] INFO  com.bienestar.Main - Starting Main using Java 21.0.11 with PID 11396 (C:\Users\Isabel\Downloads\LLM-Backend\target\classes started by Isabel in C:\Users\Isabel\Downloads\LLM-Backend)
+2026-06-26 13:34:42.535 [main] INFO  com.bienestar.Main - No active profile set, falling back to 1 default profile: "default"
+2026-06-26 13:34:44.120 [main] INFO  com.bienestar.service.LlmService - LLM configurado usando Groq API (Llama 3.1 8B)
+2026-06-26 13:34:45.908 [main] INFO  ai.djl.util.Platform - Found matching platform from: jar:file:/C:/Users/Isabel/.m2/repository/ai/djl/huggingface/tokenizers/0.26.0/tokenizers-0.26.0.jar!/native/lib/tokenizers.properties
+2026-06-26 13:34:45.996 [main] DEBUG d.l.s.e.EmbeddingStoreIngestor - Starting to ingest 7 documents
+2026-06-26 13:34:46.000 [main] DEBUG d.l.s.e.EmbeddingStoreIngestor - Starting to embed 7 text segments
+2026-06-26 13:34:46.088 [main] DEBUG d.l.s.e.EmbeddingStoreIngestor - Finished embedding 7 text segments
+2026-06-26 13:34:46.090 [main] DEBUG d.l.s.e.EmbeddingStoreIngestor - Starting to store 7 text segments into the embedding store
+2026-06-26 13:34:46.094 [main] DEBUG d.l.s.e.EmbeddingStoreIngestor - Finished storing 7 text segments into the embedding store
+2026-06-26 13:34:46.094 [main] INFO  com.bienestar.service.LlmService - RAG configurado: Se ingresaron 7 documentos en el EmbeddingStore local.
+2026-06-26 13:34:46.426 [main] INFO  com.bienestar.Main - Started Main in 4.734 seconds (process running for 5.457)
