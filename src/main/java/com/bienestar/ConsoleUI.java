@@ -12,7 +12,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Scanner;
 
 @Component
-@Profile("!test")
+@Profile({"!test", "console"})
 public class ConsoleUI implements CommandLineRunner {
 
     private final LlmService llmService;

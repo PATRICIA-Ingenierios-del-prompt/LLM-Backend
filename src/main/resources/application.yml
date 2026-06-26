@@ -1,5 +1,13 @@
 spring:
   main:
     banner-mode: off
+    web-application-type: servlet
   application:
     name: Bienestar Estudiantil
+
+server:
+  port: 8080
+
+logging:
+  level:
+    com.bienestar: INFO
