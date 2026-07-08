@@ -6,9 +6,12 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import org.springframework.test.context.ActiveProfiles;
+
 @SpringBootTest(properties = {
     "spring.main.banner-mode=off"
 })
+@ActiveProfiles("test")
 class LlmServiceTest {
 
     @Autowired
