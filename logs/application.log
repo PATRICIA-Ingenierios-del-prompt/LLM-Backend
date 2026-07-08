@@ -56,3 +56,25 @@ Error starting ApplicationContext. To display the condition evaluation report re
 2026-06-26 13:34:46.094 [main] DEBUG d.l.s.e.EmbeddingStoreIngestor - Finished storing 7 text segments into the embedding store
 2026-06-26 13:34:46.094 [main] INFO  com.bienestar.service.LlmService - RAG configurado: Se ingresaron 7 documentos en el EmbeddingStore local.
 2026-06-26 13:34:46.426 [main] INFO  com.bienestar.Main - Started Main in 4.734 seconds (process running for 5.457)
+2026-07-07 21:36:59.906 [main] INFO  c.bienestar.service.LlmServiceTest - Starting LlmServiceTest using Java 21.0.11 with PID 12360 (started by Isabel in C:\Users\Isabel\Downloads\proyecto\LLM-Backend)
+2026-07-07 21:36:59.912 [main] INFO  c.bienestar.service.LlmServiceTest - The following 1 profile is active: "test"
+2026-07-07 21:37:04.284 [main] INFO  com.bienestar.service.LlmService - LLM configurado usando Groq API (Llama 3.1 8B)
+2026-07-07 21:37:11.849 [main] INFO  ai.djl.util.Platform - Found matching platform from: jar:file:/C:/Users/Isabel/.m2/repository/ai/djl/huggingface/tokenizers/0.26.0/tokenizers-0.26.0.jar!/native/lib/tokenizers.properties
+2026-07-07 21:37:12.098 [main] DEBUG d.l.s.e.EmbeddingStoreIngestor - Starting to ingest 7 documents
+2026-07-07 21:37:12.100 [main] DEBUG d.l.s.e.EmbeddingStoreIngestor - Starting to embed 7 text segments
+2026-07-07 21:37:12.292 [main] DEBUG d.l.s.e.EmbeddingStoreIngestor - Finished embedding 7 text segments
+2026-07-07 21:37:12.292 [main] DEBUG d.l.s.e.EmbeddingStoreIngestor - Starting to store 7 text segments into the embedding store
+2026-07-07 21:37:12.299 [main] DEBUG d.l.s.e.EmbeddingStoreIngestor - Finished storing 7 text segments into the embedding store
+2026-07-07 21:37:12.300 [main] INFO  com.bienestar.service.LlmService - RAG configurado: Se ingresaron 7 documentos en el EmbeddingStore local.
+2026-07-07 21:37:13.860 [main] INFO  c.bienestar.service.LlmServiceTest - Started LlmServiceTest in 15.856 seconds (process running for 20.763)
+2026-07-07 21:38:29.914 [main] INFO  c.bienestar.service.LlmServiceTest - Starting LlmServiceTest using Java 21.0.11 with PID 12928 (started by Isabel in C:\Users\Isabel\Downloads\proyecto\LLM-Backend)
+2026-07-07 21:38:29.918 [main] INFO  c.bienestar.service.LlmServiceTest - The following 1 profile is active: "test"
+2026-07-07 21:38:33.740 [main] INFO  com.bienestar.service.LlmService - LLM configurado usando Groq API (Llama 3.1 8B)
+2026-07-07 21:38:39.871 [main] INFO  ai.djl.util.Platform - Found matching platform from: jar:file:/C:/Users/Isabel/.m2/repository/ai/djl/huggingface/tokenizers/0.26.0/tokenizers-0.26.0.jar!/native/lib/tokenizers.properties
+2026-07-07 21:38:40.091 [main] DEBUG d.l.s.e.EmbeddingStoreIngestor - Starting to ingest 7 documents
+2026-07-07 21:38:40.094 [main] DEBUG d.l.s.e.EmbeddingStoreIngestor - Starting to embed 7 text segments
+2026-07-07 21:38:40.236 [main] DEBUG d.l.s.e.EmbeddingStoreIngestor - Finished embedding 7 text segments
+2026-07-07 21:38:40.236 [main] DEBUG d.l.s.e.EmbeddingStoreIngestor - Starting to store 7 text segments into the embedding store
+2026-07-07 21:38:40.243 [main] DEBUG d.l.s.e.EmbeddingStoreIngestor - Finished storing 7 text segments into the embedding store
+2026-07-07 21:38:40.243 [main] INFO  com.bienestar.service.LlmService - RAG configurado: Se ingresaron 7 documentos en el EmbeddingStore local.
+2026-07-07 21:38:41.636 [main] INFO  c.bienestar.service.LlmServiceTest - Started LlmServiceTest in 13.518 seconds (process running for 17.908)

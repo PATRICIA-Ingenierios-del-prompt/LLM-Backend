@@ -109,11 +109,11 @@
                             <goal>check</goal>
                         </goals>
                         <configuration>
+                            <!-- Excluye clases de infraestructura que no contienen lógica de negocio -->
                             <excludes>
                                 <exclude>com/bienestar/ConsoleUI.class</exclude>
-                                <exclude>com/bienestar/Main.class</exclude>
+                                <exclude>com/bienestar/LlmBackendConsoleApplication.class</exclude>
                                 <exclude>com/bienestar/controller/**</exclude>
-                                <exclude>com/bienestar/service/DiaryRepository.class</exclude>
                             </excludes>
                             <rules>
                                 <rule>
