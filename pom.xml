@@ -109,17 +109,26 @@
                             <goal>check</goal>
                         </goals>
                         <configuration>
-                            <!-- Excluye clases de infraestructura que no contienen lógica de negocio -->
+                            <!--
+                                Clases excluidas del umbral de cobertura:
+                                - ConsoleUI: menú interactivo, requiere input de teclado
+                                - Main/Application: punto de entrada, sin lógica de negocio
+                                - controller/**: solo delega al servicio
+                                - LlmService: depende de API externa (Groq/OpenAI), no ejecutable en CI sin API key
+                            -->
                             <excludes>
                                 <exclude>com/bienestar/ConsoleUI.class</exclude>
+                                <exclude>com/bienestar/Main.class</exclude>
                                 <exclude>com/bienestar/LlmBackendConsoleApplication.class</exclude>
                                 <exclude>com/bienestar/controller/**</exclude>
+                                <exclude>com/bienestar/service/LlmService.class</exclude>
                             </excludes>
                             <rules>
                                 <rule>
                                     <element>BUNDLE</element>
                                     <limits>
                                         <limit>
+                                            <!-- Cobertura aplicada a clases testeables: AudioService, DiaryRepository -->
                                             <counter>LINE</counter>
                                             <value>COVEREDRATIO</value>
                                             <minimum>0.80</minimum>
