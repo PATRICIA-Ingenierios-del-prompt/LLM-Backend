@@ -92,6 +92,32 @@ graph TD
     DataFiles -->|Lee al inicializar| LlmSvc
 ```
 
+## Integración Continua (CI/CD) y Análisis de Código
+
+### Pipeline de Integración Continua
+Se ha implementado un pipeline de GitHub Actions (`.github/workflows/CI.yml`) que se ejecuta en cada Push o Pull Request a las ramas `develop` y `main`.
+Este pipeline automatiza:
+1. Configuración del entorno (Java 21, Maven).
+2. Ejecución de pruebas unitarias y de integración (`mvn clean verify`).
+3. Validación de umbrales de cobertura.
+
+```mermaid
+sequenceDiagram
+    participant Dev as Desarrollador
+    participant Git as GitHub (develop/main)
+    participant CI as GitHub Actions
+    
+    Dev->>Git: Push / Pull Request
+    Git->>CI: Trigger Workflow (CI.yml)
+    CI->>CI: Setup Java 21 & Maven
+    CI->>CI: mvn clean verify
+    CI-->>Git: Reporte de éxito/fallo (Build & Tests)
+```
+
+### Cobertura de Código (JaCoCo)
+El proyecto utiliza el **JaCoCo Maven Plugin** para medir la cobertura del código.
+Durante la fase `verify` de Maven, se genera un reporte en `target/site/jacoco/index.html`. Además, se ha configurado un umbral que requiere un **80% mínimo de cobertura** de líneas para que el build se considere exitoso.
+
 ## Datasets Usados (Kaggle)
 Este proyecto lee informacion en tiempo real de dos datasets alojados en `src/main/resources/data/` que son ingeridos en la memoria al iniciar el contexto de Spring:
 1. `mental_health_faq.csv`: Base de datos para soporte estudiantil.
