@@ -19,4 +19,5 @@ public class ServiceUris {
 
     private String locationWs;
     private String notificationWs;
+    private String llm;
 }

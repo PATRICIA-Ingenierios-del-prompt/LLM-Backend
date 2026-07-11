@@ -6,7 +6,7 @@ spring:
     name: Bienestar Estudiantil
 
 server:
-  port: 8080
+  port: 8086
 
 logging:
   level:

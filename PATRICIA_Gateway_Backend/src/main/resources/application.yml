@@ -15,6 +15,7 @@ gateway:
     notification: ${NOTIFICATION_SERVICE_URI:http://localhost:8091}
     location-ws: ${LOCATION_WS_URI:ws://localhost:8089}
     notification-ws: ${NOTIFICATION_WS_URI:ws://localhost:8091}
+    llm: ${LLM_SERVICE_URI:http://localhost:8086}
 
 # Mismo secreto (HS256) que jwt.secret en el Auth Backend.
 jwt:

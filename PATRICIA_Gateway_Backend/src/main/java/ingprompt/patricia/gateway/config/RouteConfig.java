@@ -25,6 +25,9 @@ public class RouteConfig {
                 .route("location-ws", r -> r.path("/ws/geo/**").uri(uris.getLocationWs()))
                 .route("notifications-ws", r -> r.path("/ws/notifications/**").uri(uris.getNotificationWs()))
 
+                // --- LLM Backend (Bienestar Estudiantil) ---
+                .route("llm", r -> r.path("/api/chat/**", "/api/diary/**", "/api/health").uri(uris.getLlm()))
+
                 .build();
     }
 }
