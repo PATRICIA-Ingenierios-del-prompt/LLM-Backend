@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gateway
+  namespace: patricia-app
+  labels: { app: gateway }
+spec:
+  replicas: {{ .Values.replicaCount }}
+  # Gateway holds long-lived WebSocket tunnels (location-ws, notification-ws):
+  # a plain rolling update (default 25%/25%) can pull down old pods before new
+  # ones are serving, dropping open tunnels. maxUnavailable: 0 forbids that;
+  # maxSurge: 1 rolls one extra pod at a time instead of a whole batch.
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 0
+      maxSurge: 1
+  selector:
+    matchLabels: { app: gateway }
+  template:
+    metadata:
+      labels: { app: gateway, patricia.io/sg-tier: standard }
+    spec:
+      serviceAccountName: gateway
+      containers:
+        - name: gateway
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - containerPort: 8080
+          envFrom:
+            - configMapRef: { name: gateway-config }
+            - secretRef:    { name: gateway-secrets }
+          # /actuator/health (exacto) es la unica ruta actuator en security.public-paths,
+          # asi que el filtro JWT la deja pasar sin token. Las subrutas /readiness y
+          # /liveness NO estan exentas -> darian 401 y el pod nunca quedaria Ready.
+          startupProbe:
+            httpGet: { path: /actuator/health, port: 8080 }
+            periodSeconds: 5
+            failureThreshold: 30    # hasta 150s para arrancar antes de considerarlo fallido
+          readinessProbe:
+            httpGet: { path: /actuator/health, port: 8080 }
+            periodSeconds: 10
+          livenessProbe:
+            httpGet: { path: /actuator/health, port: 8080 }
+            periodSeconds: 15
+            failureThreshold: 3
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
