@@ -145,6 +145,16 @@ public class LlmService {
                 .build();
     }
 
+    /**
+     * True once the RAG assistant is wired (chat model + embeddings ready).
+     * Used by WellbeingHealthIndicator to gate the readiness probe, so a pod
+     * with a missing/invalid GROQ_API_KEY fails the rollout instead of serving
+     * degraded "no configurado" responses with HTTP 200.
+     */
+    public boolean isReady() {
+        return assistant != null;
+    }
+
     public String getChatbotResponse(String userMessage) {
         if (assistant == null) return "El servicio LLM no esta configurado (Falta API Key).";
         try {
