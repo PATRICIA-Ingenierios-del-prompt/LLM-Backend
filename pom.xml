@@ -33,6 +33,13 @@
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
 
+        <!-- Actuator: /actuator/health + liveness/readiness probe groups.
+             REQUIRED for the K8s startup/readiness/liveness probes to pass. -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
+
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
@@ -122,6 +129,8 @@
                                 <exclude>com/bienestar/LlmBackendConsoleApplication.class</exclude>
                                 <exclude>com/bienestar/controller/**</exclude>
                                 <exclude>com/bienestar/service/LlmService.class</exclude>
+                                <!-- Health glue: depends on LlmService (external LLM), like controllers -->
+                                <exclude>com/bienestar/service/WellbeingHealthIndicator.class</exclude>
                             </excludes>
                             <rules>
                                 <rule>

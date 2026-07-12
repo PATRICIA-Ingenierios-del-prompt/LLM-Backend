@@ -1,0 +1,76 @@
+# ---------------------------------------------------------------------------
+# wellbeing (LLM) MS — NON-SOCKET, standard SG tier, stateless.
+# No DB / Redis / RabbitMQ. Only outbound dependency: Groq API (GROQ_API_KEY).
+# ---------------------------------------------------------------------------
+name: wellbeing
+namespace: patricia-app
+
+image:
+  repository: OVERRIDDEN_BY_CI   # 406103775000.dkr.ecr.us-east-1.amazonaws.com/patricia-dev/wellbeing
+  tag: latest                    # CI sets this to the short SHA
+  pullPolicy: IfNotPresent
+
+replicaCount: 2
+
+service:
+  type: ClusterIP
+  port: 8086
+  targetPort: 8086
+
+# NON-SOCKET => standard security-group tier (NOT "socket"). No backplane.
+sgTier: standard
+
+serviceAccount:
+  # Must be named exactly "wellbeing": the IRSA trust policy is scoped to
+  # system:serviceaccount:patricia-app:wellbeing (module.eks). The pod itself
+  # makes no AWS API calls (ESO retrieves secrets with its own role), so the
+  # role needs no extra permissions — the annotation just satisfies the pattern.
+  name: wellbeing
+  roleArn: arn:aws:iam::406103775000:role/patricia-dev-wellbeing-irsa
+
+# ONNX Runtime allocates OFF-HEAP native memory (not bounded by -Xmx). Size the
+# container at 2Gi and cap heap at 50% so the native + metaspace fit under the
+# cgroup limit; otherwise the kernel issues OOMKilled under inference load.
+resources:
+  requests:
+    cpu: "1000m"
+    memory: "2Gi"
+  limits:
+    cpu: "1000m"
+    memory: "2Gi"
+
+javaToolOptions: "-XX:MaxRAMPercentage=50.0 -XX:+UseSerialGC -XX:MaxMetaspaceSize=128m"
+
+# startupProbe absorbs the Fargate image pull + ONNX model load and GATES the
+# liveness probe (liveness only starts counting after startup succeeds), which
+# prevents CrashLoopBackOff on a slow-but-healthy cold start.
+probes:
+  startup:
+    path: /actuator/health/readiness
+    periodSeconds: 5
+    failureThreshold: 36          # ~180s cold-start budget
+  readiness:
+    path: /actuator/health/readiness
+    periodSeconds: 10
+    failureThreshold: 3
+  liveness:
+    path: /actuator/health/liveness
+    periodSeconds: 15
+    failureThreshold: 3
+
+hpa:
+  enabled: true
+  minReplicas: 2
+  maxReplicas: 4
+  targetCPUUtilizationPercentage: 70
+
+# Non-sensitive config injected as env (from ConfigMap).
+config:
+  SERVER_PORT: "8086"
+
+# Secret keys pulled from AWS Secrets Manager via ESO (see externalsecret.yaml).
+externalSecret:
+  storeName: patricia-aws-secrets-manager
+  # remoteKey holds the raw Groq API key as a plain-string secret,
+  # like patricia-dev/jwt-secret. Created in Terraform (see infra steps).
+  groqRemoteKey: patricia-dev/wellbeing/groq
