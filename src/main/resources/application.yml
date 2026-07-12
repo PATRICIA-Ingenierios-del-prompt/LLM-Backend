@@ -11,3 +11,24 @@ server:
 logging:
   level:
     com.bienestar: INFO
+
+# Actuator: expose only health. Enable the liveness/readiness probe groups so
+# Kubernetes probes hit /actuator/health/liveness and /actuator/health/readiness.
+# The custom WellbeingHealthIndicator (component below) contributes to readiness,
+# so a pod with no working LLM (missing GROQ_API_KEY) is reported NOT ready
+# instead of silently serving degraded 200s.
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
+  endpoint:
+    health:
+      probes:
+        enabled: true
+      group:
+        liveness:
+          include: livenessState
+        readiness:
+          include: readinessState,wellbeing
+      show-details: never

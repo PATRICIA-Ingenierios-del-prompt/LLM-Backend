@@ -12,7 +12,11 @@ import java.nio.charset.StandardCharsets;
 import java.util.Scanner;
 
 @Component
-@Profile({"!test", "console"})
+// Interactive console menu. ONLY runs when the "console" profile is explicitly
+// active (local use: -Dspring.profiles.active=console). In the container there
+// is no stdin, so it must NOT run — otherwise Scanner.nextLine() throws
+// NoSuchElementException and crashes the whole app -> CrashLoopBackOff.
+@Profile("console")
 public class ConsoleUI implements CommandLineRunner {
 
     private final LlmService llmService;
