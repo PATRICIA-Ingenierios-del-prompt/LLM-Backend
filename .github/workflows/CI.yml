@@ -1,23 +1,19 @@
 name: CI
-
 on:
   push:
     branches: [develop, main]
   pull_request:
     branches: [develop, main]
-
 permissions:
   contents: read
   id-token: write        # required for AWS OIDC (push-image, deploy)
   pull-requests: read
-
 env:
   IMAGE_NAME: patricia-dev/wellbeing
   HELM_RELEASE: wellbeing
   AWS_REGION: ${{ vars.AWS_REGION }}
   ECR_REGISTRY: ${{ vars.ECR_REGISTRY }}
   EKS_CLUSTER_NAME: ${{ vars.EKS_CLUSTER_NAME }}
-
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
@@ -33,7 +29,6 @@ jobs:
           cache: maven
       - name: Build, test & coverage
         run: mvn -B clean verify
-
   push-image:
     needs: build-and-test
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
@@ -53,13 +48,13 @@ jobs:
         id: meta
         run: echo "tag=${GITHUB_SHA::7}" >> "$GITHUB_OUTPUT"
       - name: Build and push image (linux/amd64)
+        # Solo el tag de SHA corta -- es lo unico que Helm usa para el deploy.
+        # El repo ECR tiene imageTagMutability=IMMUTABLE, asi que un tag fijo
+        # como "latest" no se puede re-pushear en runs posteriores.
         run: |
           docker build --platform=linux/amd64 \
-            -t "$ECR_REGISTRY/$IMAGE_NAME:${{ steps.meta.outputs.tag }}" \
-            -t "$ECR_REGISTRY/$IMAGE_NAME:latest" .
+            -t "$ECR_REGISTRY/$IMAGE_NAME:${{ steps.meta.outputs.tag }}" .
           docker push "$ECR_REGISTRY/$IMAGE_NAME:${{ steps.meta.outputs.tag }}"
-          docker push "$ECR_REGISTRY/$IMAGE_NAME:latest"
-
   deploy:
     needs: push-image
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
