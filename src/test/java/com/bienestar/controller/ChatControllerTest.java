@@ -41,4 +41,12 @@ class ChatControllerTest {
                 .content("{\"mood\": \"Feliz\", \"content\": \"\"}"))
                 .andExpect(status().isBadRequest());
     }
+
+    @Test
+    void diaryEndpointReturnsUnauthorizedWhenUserIdHeaderMissing() throws Exception {
+        mockMvc.perform(post("/api/diary")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"mood\": \"Feliz\", \"content\": \"Hoy fue un buen día\"}"))
+                .andExpect(status().isUnauthorized());
+    }
 }

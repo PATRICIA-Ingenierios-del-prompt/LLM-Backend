@@ -4,6 +4,21 @@ spring:
     web-application-type: servlet
   application:
     name: Bienestar Estudiantil
+  # Real persistence (Neon Postgres) for diary entries and exercise completions.
+  # Locally, point these at a Neon dev branch via a .env file (same pattern as
+  # GROQ_API_KEY). The localhost default is just a fallback and requires a local
+  # Postgres to actually connect.
+  datasource:
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/wellbeing}
+    username: ${SPRING_DATASOURCE_USERNAME:postgres}
+    password: ${SPRING_DATASOURCE_PASSWORD:postgres}
+  jpa:
+    open-in-view: false
+    hibernate:
+      # Flyway owns the schema; Hibernate only validates the entity mapping matches.
+      ddl-auto: validate
+  flyway:
+    enabled: true
 
 server:
   port: 8086
@@ -30,5 +45,8 @@ management:
         liveness:
           include: livenessState
         readiness:
-          include: readinessState,wellbeing
+          # "db" is auto-contributed by Spring Boot once a DataSource bean exists.
+          # Fail readiness loudly if Neon isn't reachable, same "fail loudly"
+          # philosophy as the "wellbeing" (LLM) indicator below.
+          include: readinessState,wellbeing,db
       show-details: never
