@@ -76,9 +76,10 @@ externalSecret:
   # remoteKey holds the raw Groq API key as a plain-string secret,
   # like patricia-dev/jwt-secret. Created in Terraform (see infra steps).
   groqRemoteKey: patricia-dev/wellbeing/groq
-  # PLACEHOLDERS: Neon isn't provisioned yet for this MS. DevOps must create
-  # these three plain-string secrets in AWS Secrets Manager (Terraform) once
-  # the Neon project/branch for "wellbeing" exists, then this wiring just works.
-  dbUrlRemoteKey: patricia-dev/wellbeing/db-url
-  dbUsernameRemoteKey: patricia-dev/wellbeing/db-username
-  dbPasswordRemoteKey: patricia-dev/wellbeing/db-password
+  # Neon Postgres connection for wellbeing. This secret ALREADY EXISTS in AWS
+  # Secrets Manager as a single JSON blob with 3 properties:
+  #   SPRING_DATASOURCE_URL / SPRING_DATASOURCE_USERNAME / SPRING_DATASOURCE_PASSWORD
+  # Do NOT create separate db-url/db-username/db-password secrets -- that was
+  # an earlier (incorrect) assumption. externalsecret.yaml reads each property
+  # out of this one key via remoteRef.property.
+  dbRemoteKey: patricia-dev/wellbeing/postgres
