@@ -5,7 +5,7 @@ Este proyecto es una aplicación de consola desarrollada en **Java 21**, **Sprin
 ## Requerimientos Implementados
 
 - **RF-BNST-01:** Chatbot para Apoyo Estudiantil (RAG con embeddings locales).
-- **RF-BNST-02:** Diario de Emociones (con guardado local vía Jackson ObjectMapper).
+- **RF-BNST-02:** Diario de Emociones (persistido por usuario en Postgres/Neon).
 - **RF-BNST-03:** Recomendaciones de Desconexión (Basadas en Kaggle).
 - **RF-BNST-04:** Catálogo Nativo de Sonidos de Relajación.
 - **RF-BNST-05:** Ejercicios Guiados de Respiración.
@@ -17,13 +17,18 @@ Este proyecto es una aplicación de consola desarrollada en **Java 21**, **Sprin
 ### Requisitos Previos
 1. **Java 21 (JDK 21)** instalado en el sistema y configurado en el PATH (o la variable `JAVA_HOME`).
 2. Obtener una **API Key** de Groq o OpenAI.
+3. Una base de datos Postgres alcanzable (recomendado: una rama de desarrollo en [Neon](https://neon.tech)). El servicio ya no arranca sin ella — Spring Boot falla rápido si el `DataSource`/Flyway no pueden conectar.
 
 ### Pasos
 1. Abre una consola (PowerShell o CMD) en la carpeta raíz del proyecto (`C:\Users\Isabel\Downloads\LLM-Backend`).
-2. Abre el archivo `.env` en la raíz del proyecto y agrega tu llave:
+2. Abre el archivo `.env` en la raíz del proyecto y agrega tu llave y las credenciales de la base de datos:
    ```env
    GROQ_API_KEY="tu_llave_real_aqui"
+   SPRING_DATASOURCE_URL="jdbc:postgresql://<host>/<db>?sslmode=require"
+   SPRING_DATASOURCE_USERNAME="tu_usuario"
+   SPRING_DATASOURCE_PASSWORD="tu_password"
    ```
+   Al arrancar, Flyway crea automáticamente las tablas `diary_entries` y `exercise_completions` (ver `src/main/resources/db/migration/`).
 3. Compila y ejecuta la aplicación (Spring Boot) usando el Maven local que viene incluido en la carpeta `apache-maven-3.9.6`:
 
    **En PowerShell:**
@@ -51,8 +56,8 @@ Este diagrama muestra cómo interactúa el estudiante (Usuario) con el sistema L
 
 ```mermaid
 graph TD
-    User([Estudiante]) -->|Interactúa vía consola| App[Bienestar Estudiantil App\nSpring Boot]
-    App -->|Lee/Escribe JSON| LocalDB[(diary_entries.json)]
+    User([Estudiante]) -->|Vía Gateway - X-User-Id| App[Bienestar Estudiantil App\nSpring Boot]
+    App -->|Diario + ejercicios completados| PgDB[(Postgres - Neon)]
     App -->|Consultas de Chat/RAG| LLM[API de LLM - Groq/OpenAI]
     
     classDef sys fill:#1168bd,stroke:#0b4884,color:#ffffff;
@@ -61,7 +66,7 @@ graph TD
     
     class App sys;
     class LLM ext;
-    class LocalDB db;
+    class PgDB db;
 ```
 
 ### Diagrama de Arquitectura (C4 - Nivel 2)
@@ -69,23 +74,26 @@ Este diagrama detalla los componentes internos de la aplicación y la inyección
 
 ```mermaid
 graph TD
-    subgraph "Console Application (Spring Boot)"
-        UI["ConsoleUI.java<br/>CommandLineRunner"]
+    subgraph "REST API (Spring Boot)"
+        ChatCtrl["ChatController.java<br/>@RestController - /api/chat, /api/diary"]
+        EjCtrl["EjerciciosController.java<br/>@RestController - /api/bienestar/ejercicios"]
         LlmSvc["LlmService.java<br/>@Service - Gestión RAG"]
         AudioSvc["AudioService.java<br/>@Service - Audios"]
-        DiaryRepo["DiaryRepository.java<br/>@Repository - Almacenamiento Local"]
+        DiaryRepo["DiaryRepository.java<br/>@Repository - JPA"]
+        ExSvc["ExerciseCompletionService.java<br/>@Service - JPA"]
         VectorDB[("InMemory<br/>EmbeddingStore")]
     end
 
-    UI --> LlmSvc
-    UI --> AudioSvc
-    UI --> DiaryRepo
-    
+    ChatCtrl --> LlmSvc
+    ChatCtrl --> DiaryRepo
+    EjCtrl --> ExSvc
+
     LlmSvc -->|LangChain4j AiServices| Groq[Groq/OpenAI API]
     LlmSvc -->|Ingiere Documentos| VectorDB
     LlmSvc -->|Embeddings Locales| Model[All-MiniLM-L6-V2]
-    DiaryRepo -->|Escribe entradas| JsonDB[(diary_entries.json)]
-    
+    DiaryRepo -->|diary_entries| PgDB[(Postgres - Neon)]
+    ExSvc -->|exercise_completions| PgDB
+
     subgraph "Recursos Locales"
        DataFiles[(CSV Datasets)]
     end

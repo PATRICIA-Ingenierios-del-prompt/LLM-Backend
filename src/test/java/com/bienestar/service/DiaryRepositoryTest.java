@@ -1,50 +1,59 @@
 package com.bienestar.service;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.bienestar.entity.DiaryEntry;
+import com.bienestar.repository.DiaryEntryRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import java.io.File;
+import org.mockito.ArgumentCaptor;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 class DiaryRepositoryTest {
 
+    private DiaryEntryRepository diaryEntryRepository;
     private DiaryRepository diaryRepository;
 
     @BeforeEach
     void setUp() {
-        diaryRepository = new DiaryRepository(new ObjectMapper());
-        // Eliminar archivo del diario antes de cada test para evitar datos residuales
-        new File("diary_entries.json").delete();
+        diaryEntryRepository = mock(DiaryEntryRepository.class);
+        diaryRepository = new DiaryRepository(diaryEntryRepository);
     }
 
     @Test
-    void saveEntryCreatesFileAndPersistsData() {
+    void saveEntryPersistsEntryViaJpaRepository() {
         diaryRepository.saveEntry("student1", "Hoy me sentí bien", "Feliz");
-        assertTrue(new File("diary_entries.json").exists());
+
+        ArgumentCaptor<DiaryEntry> captor = ArgumentCaptor.forClass(DiaryEntry.class);
+        verify(diaryEntryRepository, times(1)).save(captor.capture());
+
+        DiaryEntry saved = captor.getValue();
+        assertEquals("student1", saved.userId);
+        assertEquals("Hoy me sentí bien", saved.content);
+        assertEquals("Feliz", saved.mood);
+        assertNotNull(saved.createdAt);
     }
 
     @Test
-    void saveMultipleEntriesDoesNotFail() {
+    void saveMultipleEntriesCallsRepositoryEachTime() {
         diaryRepository.saveEntry("student1", "Entrada 1", "Feliz");
         diaryRepository.saveEntry("student2", "Entrada 2", "Triste");
-        // Verifica que se puede guardar varias veces sin excepción
-        assertTrue(new File("diary_entries.json").exists());
+
+        verify(diaryEntryRepository, times(2)).save(any(DiaryEntry.class));
     }
 
     @Test
     void diaryEntryConstructorSetsFields() {
-        DiaryRepository.DiaryEntry entry = new DiaryRepository.DiaryEntry("u1", "contenido", "Estresado");
+        DiaryEntry entry = new DiaryEntry("u1", "contenido", "Estresado");
         assertEquals("u1", entry.userId);
         assertEquals("contenido", entry.content);
         assertEquals("Estresado", entry.mood);
-        assertNotNull(entry.timestamp);
+        assertNotNull(entry.createdAt);
     }
 
     @Test
     void diaryEntryDefaultConstructorWorks() {
-        DiaryRepository.DiaryEntry entry = new DiaryRepository.DiaryEntry();
+        DiaryEntry entry = new DiaryEntry();
         assertNull(entry.userId);
     }
 }

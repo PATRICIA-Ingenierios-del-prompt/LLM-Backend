@@ -1,6 +1,8 @@
 # ---------------------------------------------------------------------------
-# wellbeing (LLM) MS — NON-SOCKET, standard SG tier, stateless.
-# No DB / Redis / RabbitMQ. Only outbound dependency: Groq API (GROQ_API_KEY).
+# wellbeing (LLM) MS — NON-SOCKET, standard SG tier.
+# Outbound dependencies: Groq API (GROQ_API_KEY) and a Neon Postgres database
+# (diary entries + exercise completions, for the Bienestar achievements album).
+# No Redis / RabbitMQ.
 # ---------------------------------------------------------------------------
 name: wellbeing
 namespace: patricia-app
@@ -74,3 +76,9 @@ externalSecret:
   # remoteKey holds the raw Groq API key as a plain-string secret,
   # like patricia-dev/jwt-secret. Created in Terraform (see infra steps).
   groqRemoteKey: patricia-dev/wellbeing/groq
+  # PLACEHOLDERS: Neon isn't provisioned yet for this MS. DevOps must create
+  # these three plain-string secrets in AWS Secrets Manager (Terraform) once
+  # the Neon project/branch for "wellbeing" exists, then this wiring just works.
+  dbUrlRemoteKey: patricia-dev/wellbeing/db-url
+  dbUsernameRemoteKey: patricia-dev/wellbeing/db-username
+  dbPasswordRemoteKey: patricia-dev/wellbeing/db-password
