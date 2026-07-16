@@ -21,14 +21,14 @@ class ChatControllerTest {
 
     @Test
     void healthEndpointReturnsOk() throws Exception {
-        mockMvc.perform(get("/api/health"))
+        mockMvc.perform(get("/api/bienestar/health"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.status").value("ok"));
     }
 
     @Test
     void chatEndpointReturnsBadRequestWhenMessageIsEmpty() throws Exception {
-        mockMvc.perform(post("/api/chat")
+        mockMvc.perform(post("/api/bienestar/chat")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("{\"message\": \"\"}"))
                 .andExpect(status().isBadRequest());
@@ -36,7 +36,7 @@ class ChatControllerTest {
 
     @Test
     void diaryEndpointReturnsBadRequestWhenContentIsEmpty() throws Exception {
-        mockMvc.perform(post("/api/diary")
+        mockMvc.perform(post("/api/bienestar/diary")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("{\"mood\": \"Feliz\", \"content\": \"\"}"))
                 .andExpect(status().isBadRequest());
@@ -44,7 +44,7 @@ class ChatControllerTest {
 
     @Test
     void diaryEndpointReturnsUnauthorizedWhenUserIdHeaderMissing() throws Exception {
-        mockMvc.perform(post("/api/diary")
+        mockMvc.perform(post("/api/bienestar/diary")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("{\"mood\": \"Feliz\", \"content\": \"Hoy fue un buen día\"}"))
                 .andExpect(status().isUnauthorized());
