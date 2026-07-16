@@ -8,7 +8,7 @@ name: wellbeing
 namespace: patricia-app
 
 image:
-  repository: OVERRIDDEN_BY_CI   # 406103775000.dkr.ecr.us-east-1.amazonaws.com/patricia-dev/wellbeing
+  repository: OVERRIDDEN_BY_CI   # 188701360691.dkr.ecr.us-east-1.amazonaws.com/patricia-dev/wellbeing
   tag: latest                    # CI sets this to the short SHA
   pullPolicy: IfNotPresent
 
@@ -28,7 +28,7 @@ serviceAccount:
   # makes no AWS API calls (ESO retrieves secrets with its own role), so the
   # role needs no extra permissions — the annotation just satisfies the pattern.
   name: wellbeing
-  roleArn: arn:aws:iam::406103775000:role/patricia-dev-wellbeing-irsa
+  roleArn: arn:aws:iam::188701360691:role/patricia-dev-wellbeing-irsa
 
 # ONNX Runtime allocates OFF-HEAP native memory (not bounded by -Xmx). Size the
 # container at 2Gi and cap heap at 50% so the native + metaspace fit under the
