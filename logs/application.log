@@ -2512,3 +2512,49 @@ java.lang.IllegalStateException: ApplicationContext failure threshold (1) exceed
 2026-07-15 23:04:40.117 [SpringApplicationShutdownHook] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
 2026-07-15 23:04:40.120 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
 2026-07-15 23:04:40.120 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.
+2026-07-16 00:05:52.630 [main] INFO  c.b.controller.ChatControllerTest - Starting ChatControllerTest using Java 25.0.2 with PID 95923 (started by juanleal in /Users/juanleal/Desktop/LLM-Backend)
+2026-07-16 00:05:52.631 [main] INFO  c.b.controller.ChatControllerTest - The following 1 profile is active: "test"
+2026-07-16 00:05:52.912 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-07-16 00:05:52.929 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 13 ms. Found 2 JPA repository interfaces.
+2026-07-16 00:05:53.132 [main] INFO  o.h.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2026-07-16 00:05:53.159 [main] INFO  org.hibernate.Version - HHH000412: Hibernate ORM core version 6.4.4.Final
+2026-07-16 00:05:53.174 [main] INFO  o.h.c.i.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2026-07-16 00:05:53.256 [main] INFO  o.s.o.j.p.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-07-16 00:05:53.266 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2026-07-16 00:05:53.328 [main] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection conn0: url=jdbc:h2:mem:wellbeing user=SA
+2026-07-16 00:05:53.330 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2026-07-16 00:05:53.628 [main] INFO  o.h.e.t.j.p.i.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-07-16 00:05:53.640 [main] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-07-16 00:05:53.649 [main] WARN  com.bienestar.service.LlmService - Ni GROQ_API_KEY ni OPENAI_API_KEY estan configuradas. El LLM no funcionara correctamente.
+2026-07-16 00:05:56.887 [main] INFO  ai.djl.util.Platform - Found matching platform from: jar:file:/Users/juanleal/.m2/repository/ai/djl/huggingface/tokenizers/0.26.0/tokenizers-0.26.0.jar!/native/lib/tokenizers.properties
+2026-07-16 00:05:57.365 [main] INFO  o.s.b.t.m.w.SpringBootMockServletContext - Initializing Spring TestDispatcherServlet ''
+2026-07-16 00:05:57.365 [main] INFO  o.s.t.w.s.TestDispatcherServlet - Initializing Servlet ''
+2026-07-16 00:05:57.369 [main] INFO  o.s.b.a.e.web.EndpointLinksResolver - Exposing 1 endpoint(s) beneath base path '/actuator'
+2026-07-16 00:05:57.374 [main] INFO  o.s.t.w.s.TestDispatcherServlet - Completed initialization in 9 ms
+2026-07-16 00:05:57.400 [main] INFO  c.b.controller.ChatControllerTest - Started ChatControllerTest in 4.904 seconds (process running for 5.243)
+2026-07-16 00:05:57.737 [SpringApplicationShutdownHook] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
+2026-07-16 00:05:57.739 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
+2026-07-16 00:05:57.740 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.
+2026-07-16 00:05:59.455 [main] INFO  c.b.controller.ChatControllerTest - Starting ChatControllerTest using Java 25.0.2 with PID 95956 (started by juanleal in /Users/juanleal/Desktop/LLM-Backend)
+2026-07-16 00:05:59.456 [main] INFO  c.b.controller.ChatControllerTest - The following 1 profile is active: "test"
+2026-07-16 00:05:59.731 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-07-16 00:05:59.747 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 14 ms. Found 2 JPA repository interfaces.
+2026-07-16 00:05:59.960 [main] INFO  o.h.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2026-07-16 00:05:59.981 [main] INFO  org.hibernate.Version - HHH000412: Hibernate ORM core version 6.4.4.Final
+2026-07-16 00:05:59.993 [main] INFO  o.h.c.i.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2026-07-16 00:06:00.069 [main] INFO  o.s.o.j.p.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-07-16 00:06:00.078 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2026-07-16 00:06:00.136 [main] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection conn0: url=jdbc:h2:mem:wellbeing user=SA
+2026-07-16 00:06:00.137 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2026-07-16 00:06:00.401 [main] INFO  o.h.e.t.j.p.i.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-07-16 00:06:00.410 [main] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-07-16 00:06:00.419 [main] WARN  com.bienestar.service.LlmService - Ni GROQ_API_KEY ni OPENAI_API_KEY estan configuradas. El LLM no funcionara correctamente.
+2026-07-16 00:06:01.616 [main] INFO  ai.djl.util.Platform - Found matching platform from: jar:file:/Users/juanleal/.m2/repository/ai/djl/huggingface/tokenizers/0.26.0/tokenizers-0.26.0.jar!/native/lib/tokenizers.properties
+2026-07-16 00:06:02.071 [main] INFO  o.s.b.t.m.w.SpringBootMockServletContext - Initializing Spring TestDispatcherServlet ''
+2026-07-16 00:06:02.072 [main] INFO  o.s.t.w.s.TestDispatcherServlet - Initializing Servlet ''
+2026-07-16 00:06:02.075 [main] INFO  o.s.b.a.e.web.EndpointLinksResolver - Exposing 1 endpoint(s) beneath base path '/actuator'
+2026-07-16 00:06:02.081 [main] INFO  o.s.t.w.s.TestDispatcherServlet - Completed initialization in 8 ms
+2026-07-16 00:06:02.106 [main] INFO  c.b.controller.ChatControllerTest - Started ChatControllerTest in 2.769 seconds (process running for 3.064)
+2026-07-16 00:06:02.421 [SpringApplicationShutdownHook] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
+2026-07-16 00:06:02.423 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
+2026-07-16 00:06:02.424 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.
